@@ -1,9 +1,15 @@
 {               OpenBraceToken
+
 }               CloseBraceToken
+
 (               OpenParenToken
+
 )               CloseParenToken
+
 [               OpenBracketToken
+
 ]               CloseBracketToken
+
 .               DotToken
 ...             DotDotDotToken
 ;               SemicolonToken
