@@ -1,0 +1,411 @@
+<h2>TypeScript 是什么
+```
+TypeScript 是一种由微软开发的自由和开源的编程语言。它是 JavaScript 的一个超集，而且本质上向这个语言添加了可选的静态类型和基于类的面向对象编程。 
+TypeScript 扩展了 JavaScript 的句法，所以任何现有的 JavaScript 程序可以不加改变的在 TypeScript 下工作。TypeScript 是为大型应用之开发而设计，而编译时它产生 JavaScript 以确保兼容性。
+```
+typescript-and-es-feature
+
+安装 TypeScript
+$ npm install -g typescript
+编译 TypeScript 文件
+$ tsc app.ts # app.ts => app.js
+TypeScript 数据类型
+Boolean 类型
+let isDone: boolean = false; // tsc => var isDone = false;
+Number 类型
+let count: number = 10; // tsc => var count = 10
+String 类型
+let name: string = 'Semliker'; // tsc => var name = 'Semlinker'
+Array 类型
+let list: number[] = [1,2,3]; // tsc => var list = [1,2,3];   
+
+let list: Array<number> = [1,2,3]; 
+// tsc => var list = [1,2,3];
+Enum 类型
+enum Direction {
+    NORTH，
+    SOUTH，
+    EAST，
+    WEST
+}; 
+
+let dir: Direction = Direction.NORTH; 
+Any (动态类型)
+let notSure: any = 4;
+notSure = "maybe a string instead";
+notSure = false; 
+
+=> tsc =>  
+
+var notSure = 4;
+notSure = "maybe a string instead";
+notSure = false;
+Void
+某种程度上来说，void 类型像是与 any 类型相反，它表示没有任何类型。当一个函数没有返回值时，你通常会见到其返回值类型是 void：
+
+// 声明函数返回值为void
+function warnUser(): void { 
+    console.log("This is my warning message");
+}
+
+=> tsc =>  
+
+function warnUser() {
+    console.log("This is my warning message");
+}  
+需要注意的是，声明一个 void 类型的变量没有什么作用，因为它的值只能为 undefined 或 null：
+
+let unusable: void = undefined;
+Tuple
+元组类型允许表示一个已知元素数量和类型的数组，各元素的类型不必相同。比如，你可以定义一对值分别为 string 和 number 类型的元组。
+
+let x: [string, number];
+
+x = ['semlinker', 10]; // 正常赋值
+
+x = [10, 'semlinker']; // 类型不匹配
+当访问一个已知索引的元素，会得到正确的类型：
+
+console.log(x[0].substr(1)); // OK
+
+// Error, 'number' does not have 'substr' method
+console.log(x[1].substr(1)); 
+当访问一个越界的元素，会使用联合类型替代：
+
+x[3] = 'world'; // OK, 字符串可以赋值给(string | number) 类型
+
+console.log(x[5].toString()); // OK, 'string' 和 'number' 都有 toString 方法
+
+x[6] = true; // Error, 布尔不是(string | number) 类型
+TypeScript Assertion
+有时候你会遇到这样的情况，你会比 TypeScript 更了解某个值的详细信息。通常这会发生在你清楚地知道一个实体具有比它现有类型更确切的类型。
+
+通过类型断言这种方式可以告诉编译器，"相信我，我知道自己在干什么"。类型断言好比其他语言里的类型转换，但是不进行特殊的数据检查和解构。它没有运行时的影响，只是在编译阶段起作用。
+
+类型断言有两种形式：
+
+"尖括号"语法
+
+let someValue: any = "this is a string";
+let strLength: number = (<string>someValue).length;
+as 语法
+
+let someValue: any = "this is a string";
+let strLength: number = (someValue as string).length;
+TypeScript Union Types and Type Aliases
+Union Types
+let greet = (message: string | string[]) => {
+  if(message instanceof Array) {
+    let messages = "";
+    message.forEach((msg) => {
+      messages += ` ${msg}`;
+    });
+    console.log("Received messages ", messages);
+  } else {
+    console.log("Received message = ", message);
+  }
+};
+
+greet('semlinker');
+greet(['Hello', 'Angular']);
+Type Aliases
+type Message = string | string[];
+let greet = (message: Message) => { 
+  // ... 
+};
+TypeScript Function
+TypeScript 函数与 JavaScript 函数的区别
+TypeScript	JavaScript
+Types	No types
+Arrow function	Arrow function (ES2015)
+Function types	No Function types
+Required and Optional parameters	All parameters are optional
+Default parameters	Default parameters
+Rest parameters	Rest parameters
+Overloaded function	No overloaded functions
+箭头函数
+常见语法
+
+myBooks.forEach(() => console.log('Done reading'));
+
+myBooks.forEach(title => console.log(title));
+
+myBooks.forEach((title, idx, arr) => 
+  console.log(idx + '-' + title);
+);
+
+myBooks.forEach((title, idx, arr) => {
+  console.log(idx + '-' + title);
+});
+使用示例
+
+// 未使用箭头函数
+function Book() {
+  let self = this;
+  self.publishDate = 2016;
+  setInterval(function() {
+    console.log(self.publishDate);
+  }, 1000);
+}
+
+// 使用箭头函数
+function Book() {
+  this.publishDate = 2016;
+  setInterval(() => {
+    console.log(this.publishDate);
+  }, 1000);
+}
+参数类型和返回类型
+function createUserId(name: string, id: number): string {
+  return name + id;
+}
+函数类型
+let IdGenerator: (chars: string, nums: number) => string;
+
+function createUserId(name: string, id: number): string {
+  return name + id;
+}
+
+IdGenerator = createUserId;
+可选参数及默认参数
+// 可选参数
+function createUserId(name: string, age?: number, 
+  id: number): string {
+    return name + id;
+}
+
+// 默认参数
+function createUserId(name: string = 'Semlinker', age?: number, 
+  id: number): string {
+    return name + id;
+}
+剩余参数
+function push(array, ...items) {
+  items.forEach(function(item) {
+    array.push(item);
+  });
+}
+
+let a = [];
+push(a, 1, 2, 3);
+TypeScript Array
+数组解构
+let x: number, let y: number ,let z: number;
+let five_array = [0,1,2,3,4];
+[x,y,z] = five_array;
+数组展开运算符
+let two_array = [0,1];
+let five_array = [...two_array,2,3,4];
+数组循环
+let colors: string[] = ["red", "green", "blue"];
+for(let i in colors) {
+  console.log(i);
+}
+TypeScript Object
+对象解构
+let person = {
+  name: 'Semlinker',
+  gender: 'male'
+};
+
+let {name, gender} = person;
+对象展开运算符
+let person = {
+  name: 'Semlinker',
+  gender: 'male',
+  address: 'Xiamen'
+};
+
+// 组装对象
+let personWithAge = {...person, age: 31};
+
+// 获取除了某些项外的其它项
+let {name, ...rest} = person;
+TypeScript Interface
+在面向对象语言中，接口（Interfaces）是一个很重要的概念，它是对行为的抽象，而具体如何行动需要由类（classes）去实现（implements）。
+
+TypeScript 中的接口是一个非常灵活的概念，除了可用于对类的一部分行为进行抽象以外，也常用于对「对象的形状（Shape）」进行描述。
+
+对象的形状
+interface Person {
+  name: string;
+  age: number;
+}
+
+let semlinker: Person = {
+  name: 'Semlinker',
+  age: 31
+};
+可选 | 只读属性
+interface Person {
+  readonly name: string;
+  age?: number;
+}
+TypeScript Class
+在面向对象语言中，类是一种面向对象计算机编程语言的构造，是创建对象的蓝图，描述了所创建的对象共同的属性和方法。
+
+在 TypeScript 中，我们可以通过 Class 关键字来定义一个类：
+
+class Greeter {
+   static cname: string = 'Greeter'; // 静态属性
+   greeting: string; // 成员属行
+
+   constructor(message: string) { // 构造函数 - 执行初始化操作
+     this.greeting = message;
+   }
+
+    static getClassName() { // 静态方法
+      return 'Class name is Greeter';
+    }
+    
+    greet() { // 成员方法
+      return "Hello, " + this.greeting;
+    }
+}
+
+let greeter = new Greeter("world");
+TypeScript Accessors
+在 TypeScript 中，我们可以通过 getter 和 setter 方法来实现数据的封装和有效性校验，防止出现异常数据。
+
+let passcode = "hello angular 5";
+
+class Employee {
+    private _fullName: string;
+
+    get fullName(): string {
+        return this._fullName;
+    }
+
+    set fullName(newName: string) {
+        if (passcode && passcode == "hello angular 5") {
+            this._fullName = newName;
+        }
+        else {
+            console.log("Error: Unauthorized update of employee!");
+        }
+    }
+}
+
+let employee = new Employee();
+employee.fullName = "Bob Smith";
+if (employee.fullName) {
+    console.log(employee.fullName);
+}
+
+TypeScript Inheritance
+继承 (Inheritance) 是一种联结类与类的层次模型。指的是一个类 (称为子类、子接口) 继承另外的一个类 (称为父类、父接口) 的功能，并可以增加它自己的新功能的能力，继承是类与类或者接口与接口之间最常见的关系；继承是一种 is-a 关系。
+
+class-inheritance
+
+在 TypeScripe 中，我们可以通过 extends 关键字来实现继承：
+
+class Animal {
+    name: string;
+    constructor(theName: string) { this.name = theName; }
+    move(distanceInMeters: number = 0) {
+        console.log(`${this.name} moved ${distanceInMeters}m.`);
+    }
+}
+
+class Snake extends Animal {
+    constructor(name: string) { super(name); }
+    move(distanceInMeters = 5) {
+        console.log("Slithering...");
+        super.move(distanceInMeters);
+    }
+}
+
+let sam = new Snake("Sammy the Python");
+sam.move();
+TypeScript Generics
+泛型（Generics）是允许同一个函数接受不同类型参数的一种模板。相比于使用 any 类型，使用泛型来创建可复用的组件要更好，因为泛型会保留参数类型。
+
+泛型接口
+interface GenericIdentityFn<T> {
+    (arg: T): T;
+}
+泛型类
+class GenericNumber<T> {
+    zeroValue: T;
+    add: (x: T, y: T) => T;
+}
+
+let myGenericNumber = new GenericNumber<number>();
+myGenericNumber.zeroValue = 0;
+myGenericNumber.add = function(x, y) { return x + y; };
+使用示例
+interface Hero { // Hero 接口
+    id: number;
+    name: string;
+}
+
+getHeroes(): Observable<Hero[]> {
+  return Observable.of([
+     { id: 1, name: 'Windstorm' },
+     { id: 13, name: 'Bombasto' },
+     { id: 15, name: 'Magneta' },
+     { id: 20, name: 'Tornado' }
+  ]);
+}
+上面 getHeroes(): Observable<Hero[]> 表示调用 getHeroes() 方法后返回的是一个 Observable 对象，<Hero[]> 用于表示该 Observable 对象的观察者，将会收到的数据类型。示例中表示将会返回 <Hero[]> 英雄列表。
+
+tsconfig.json 简介
+tsconfig.json 的作用
+用于标识 TypeScript 项目的根路径
+
+用于配置 TypeScript 编译器
+
+用于指定编译的文件
+
+tsconfig.json 重要字段
+files - 设置要编译的文件的名称
+
+include - 设置需要进行编译的文件，支持路径模式匹配
+
+exclude - 设置无需进行编译的文件，支持路径模式匹配
+
+compilerOptions - 设置与编译流程相关的选项
+
+tsconfig.json - compilerOptions
+字段	说明
+target	Desired ECMAScript version (es3,es5,es2015,es2016,es2017, or esNext)
+rootDir	Root directory of input files
+listFiles	Print file names processed by the compiler
+outDir	Directory to contain compiled results
+outFile	File to contain concatenated results
+watch	Watch input files
+removeComments	Remove comments from generated output
+noLib	Don't include the main library, lib.d.ts, in the compilation process
+alwaysStrict	Specifies whether strict mode should be enabled
+noEmitOnError	Don't generate output if any errors were encounted
+noImplicitThis	Raise an error on this expressions with implied any type
+noUnuseLocals	Report errors on unused parameters
+noImplicitAny	Print a warning for every variable that isn't explicitly declared
+suppressImplicit Any IndexErrors	Suppress Implicit AnyIndexError
+skipLibCheck	Suppress type checking of declarations files
+experimental Decorators	Enable support for ES7 decorators
+declaration	Generate declaration file(*.d.ts) for the TypeScript code
+declarationDir	Place declaration files in the given directory
+module	The formate of the generated module (commonjs, amd, system, umd, or es2015)
+noEmitHelpers	Do not insert custom helper functions in generated output
+emitDecoratorMetadata	Insert metadata for TypeScript decorations
+isolatedModule	Always insert imports for unresolved files
+jsx	Generate JSC code (preserve or react)
+moduleResolution	Strategy for resolving module (node or classic)
+tsconfig.json 示例
+{
+  "files": ["src/app/app.ts"],
+  "compilerOptions": {
+    "target": "es5",
+    "removeComments": true,
+    "alwaysStrict": true,
+    "noEmitOnError": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  }
+}
+alwaysStrict - ES 5 代码将在严格模式下执行
+
+noEmitOnError - 表示当发生错误的时候，编译器不要生成 JavaScript 代码
+
+noUnusedLocals 和 noUnusedParameters - 表示编译器将检测没有使用的变量或参数
