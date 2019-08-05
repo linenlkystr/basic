@@ -105,6 +105,7 @@ await           AwaitKeyword
 boolean         BooleanKeyword
 constructor     ConstructorKeyword
 declare         DeclareKeyword
+                (declare关键字用于环境声明，您可以在其中定义可能不是源自TypeScript文件的变量,例如来自JavaScript。）
 get             GetKeyword
 infer           InferKeyword
 is              IsKeyword
